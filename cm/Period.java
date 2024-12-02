@@ -22,18 +22,17 @@ public class Period {
      * @param hour the start of the hour to check
      * @return true if the hour is within the period
      */
-    private Boolean isIn(int hour) {
+    private boolean isIn(int hour) {
         return hour >= this.startHour && hour < this.endHour;
     }
 
-    private static Boolean isIn(int hour, List<Period> list) {
-        Boolean isIn = false;
-        int i = 0;
-        while (i < list.size() && !isIn) {
-            isIn = list.get(i).isIn(hour);
-            i++;
+    private static boolean isIn(int hour, List<Period> list) {
+        for (Period period : list) {
+            if (period.isIn(hour)) {
+                return true; // Hour is found in one of the periods
+            }
         }
-        return isIn;
+        return false; // Hour is not found in any period
     }
 
     /**

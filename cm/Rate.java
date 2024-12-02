@@ -18,7 +18,7 @@ public class Rate {
         if (normalRate == null || reducedRate == null) {
             throw new IllegalArgumentException("The rates cannot be null");
         }
-        if (normalRate.compareTo(BigDecimal.TEN) > 0 || reducedRate.compareTo(BigDecimal.TEN) > 0) {
+        if (normalRate.compareTo(BigDecimal.TEN) > 0) {
             throw new IllegalArgumentException("The rates cannot be more than 10");
         }
         if (normalRate.compareTo(BigDecimal.ZERO) < 0 || reducedRate.compareTo(BigDecimal.ZERO) < 0) {
@@ -47,7 +47,7 @@ public class Rate {
      * @return true if the two collections of periods are valid together
      */
     private boolean isValidPeriods(ArrayList<Period> periods1, ArrayList<Period> periods2) {
-        Boolean isValid = true;
+        boolean isValid = true;
         int i = 0;
         while (i < periods1.size() && isValid) {
             isValid = isValidPeriod(periods1.get(i), periods2);
@@ -61,8 +61,8 @@ public class Rate {
      * @param list the collection of periods to check
      * @return true if the periods do not overlap
      */
-    private Boolean isValidPeriods(ArrayList<Period> list) {
-        Boolean isValid = true;
+    private boolean isValidPeriods(ArrayList<Period> list) {
+        boolean isValid = true;
         if (list.size() >= 2) {
             int i = 0;
             int lastIndex = list.size()-1;
@@ -80,8 +80,8 @@ public class Rate {
      * @param list the collection of periods to check
      * @return true if the period does not overlap in the collection of periods
      */
-    private Boolean isValidPeriod(Period period, List<Period> list) {
-        Boolean isValid = true;
+    private boolean isValidPeriod(Period period, List<Period> list) {
+        boolean isValid = true;
         int i = 0;
         while (i < list.size() && isValid) {
             isValid = !period.overlaps(list.get(i));
