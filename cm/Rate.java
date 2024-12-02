@@ -90,11 +90,42 @@ public class Rate {
         return isValid;
     }
     public BigDecimal calculate(Period periodStay) {
+        // Calculate normal and reduced rate hours
         int normalRateHours = periodStay.occurrences(normal);
         int reducedRateHours = periodStay.occurrences(reduced);
-        if (this.kind==CarParkKind.VISITOR) return BigDecimal.valueOf(0);
-        return (this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))).add(
-                this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+
+        // Calculate the total cost before applying reductions
+        BigDecimal totalCost = hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))
+                .add(hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
+
+        // Apply reduction rules based on the CarParkKind
+        switch (kind) {
+            case VISITOR:
+                if (totalCost.compareTo(BigDecimal.TEN) <= 0) {
+                    return BigDecimal.ZERO; // Free if total is <= 10
+                } else {
+                    return totalCost.subtract(BigDecimal.TEN).multiply(BigDecimal.valueOf(0.5));
+                }
+
+            case MANAGEMENT:
+                // Ensure a minimum payable amount of 4.00
+                return totalCost.compareTo(BigDecimal.valueOf(4)) < 0 ? BigDecimal.valueOf(4) : totalCost;
+
+            case STUDENT:
+                if (totalCost.compareTo(BigDecimal.valueOf(5.50)) <= 0) {
+                    return totalCost; // No reduction for amounts <= 5.50
+                } else {
+                    BigDecimal reducedAmount = totalCost.subtract(BigDecimal.valueOf(5.50)).multiply(BigDecimal.valueOf(0.75));
+                    return reducedAmount.add(BigDecimal.valueOf(5.50));
+                }
+
+            case STAFF:
+                // Cap the total payable amount at 16.00
+                return totalCost.compareTo(BigDecimal.valueOf(16)) > 0 ? BigDecimal.valueOf(16) : totalCost;
+
+            default:
+                throw new IllegalArgumentException("Invalid CarParkKind");
+        }
     }
 
 }
