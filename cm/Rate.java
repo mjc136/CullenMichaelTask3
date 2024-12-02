@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rate {
-    private CarParkKind kind;
-    private BigDecimal hourlyNormalRate;
-    private BigDecimal hourlyReducedRate;
-    private ArrayList<Period> reduced = new ArrayList<>();
-    private ArrayList<Period> normal = new ArrayList<>();
+    private final CarParkKind kind;
+    private final BigDecimal hourlyNormalRate;
+    private final BigDecimal hourlyReducedRate;
+    private final ArrayList<Period> reduced;
+    private final ArrayList<Period> normal;
 
     public Rate(CarParkKind kind, ArrayList<Period> reducedPeriods, ArrayList<Period> normalPeriods, BigDecimal normalRate, BigDecimal reducedRate) {
         if (reducedPeriods == null || normalPeriods == null) {
@@ -64,7 +64,6 @@ public class Rate {
     private Boolean isValidPeriods(ArrayList<Period> list) {
         Boolean isValid = true;
         if (list.size() >= 2) {
-            Period secondPeriod;
             int i = 0;
             int lastIndex = list.size()-1;
             while (i < lastIndex && isValid) {
@@ -79,7 +78,7 @@ public class Rate {
      * checks if a period is a valid addition to a collection of periods
      * @param period the Period addition
      * @param list the collection of periods to check
-     * @return true if the period does not overlap in the collecton of periods
+     * @return true if the period does not overlap in the collection of periods
      */
     private Boolean isValidPeriod(Period period, List<Period> list) {
         Boolean isValid = true;
@@ -91,8 +90,8 @@ public class Rate {
         return isValid;
     }
     public BigDecimal calculate(Period periodStay) {
-        int normalRateHours = periodStay.occurences(normal);
-        int reducedRateHours = periodStay.occurences(reduced);
+        int normalRateHours = periodStay.occurrences(normal);
+        int reducedRateHours = periodStay.occurrences(reduced);
         if (this.kind==CarParkKind.VISITOR) return BigDecimal.valueOf(0);
         return (this.hourlyNormalRate.multiply(BigDecimal.valueOf(normalRateHours))).add(
                 this.hourlyReducedRate.multiply(BigDecimal.valueOf(reducedRateHours)));
